@@ -5,30 +5,30 @@ import java.util.Collections;
 import java.util.List;
 
 public final class Board {
-    private final int coL = 4;
-    private final int roL = 4;
+    private final int constcol = 4;
+    private final int constrol = 4;
     private final int sizeBoard = 4;
 
-    private final int[][] grid = new int[coL][roL];
+    private final int[][] grid = new int[constcol][constrol];
 
     public Board() {}
     ;
 
     public Board(Board other) {
-        for (int r = 0; r < roL; r++) {
+        for (int r = 0; r < constrol; r++) {
             System.arraycopy(other.grid[r], 0, this.grid[r], 0, sizeBoard);
         }
     }
 
     public int get(int row, int col) {
-        if (row < 0 || row >= roL || col < 0 || col >= coL) {
+        if (row < 0 || row >= constrol || col < 0 || col >= constcol) {
             throw new IndexOutOfBoundsException("Board    |  принятые данные в гетер не соотвествует формату");
         }
         return grid[row][col];
     }
 
     public void set(int row, int col, int cashback) {
-        if (row < 0 || row >= roL || col < 0 || col >= coL) {
+        if (row < 0 || row >= constrol || col < 0 || col >= constcol) {
             throw new IndexOutOfBoundsException("Board    |  Invalid position: row=" + row + ", col=" + col);
         }
         if (cashback < 0) {
@@ -62,8 +62,8 @@ public final class Board {
         if (!(obj instanceof Board board)) {
             return false;
         }
-        for (int r = 0; r < roL; r++) {
-            for (int c = 0; c < coL; c++) {
+        for (int r = 0; r < constrol; r++) {
+            for (int c = 0; c < constcol; c++) {
                 if (this.grid[r][c] != board.grid[r][c]) {
                     return false;
                 }
@@ -75,8 +75,8 @@ public final class Board {
     @Override
     public int hashCode() {
         int res = 1;
-        for (int r = 0; r < roL; r++) {
-            for (int c = 0; c < coL; c++) {
+        for (int r = 0; r < constrol; r++) {
+            for (int c = 0; c < constcol; c++) {
                 res = 31 * res + grid[r][c];
             }
         }
@@ -86,8 +86,8 @@ public final class Board {
     @Override
     public String toString() {
         StringBuilder substr = new StringBuilder();
-        for (int r = 0; r < roL; r++) {
-            for (int c = 0; c < coL; c++) {
+        for (int r = 0; r < constrol; r++) {
+            for (int c = 0; c < constcol; c++) {
                 int value = grid[r][c];
                 if (value == 0) {
                     substr.append(" . ");
