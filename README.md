@@ -39,3 +39,51 @@
 
 **Этот файл — твой.** Опиши здесь, что получилось, как это запускать и какие
 решения ты принял. Обновление README входит в чеклист каждого merge request'а.
+
+
+
+# MR1
+**<p style="color: red">Что сделано:</p>**
+
+**Модель игры:**
+- Поле 4x4 (Board) с защитой от выхода за границы
+- Плитки хранят уровень кэшбэка (1%, 2%, 4% и т.д.)
+- Состояние игры (GameState) - это снимок: поле, остаток ходов, счет, seed
+- Начальное поле генерируется по seed - два раза спавним плитки, и всё детерминировано
+
+**Конфиг:**
+- Загружается из JSON через Jackson (ConfigLoader)
+- Валидируется сразу при создании (CampaignConfig)
+- Проверяется что movesLimit > 0, список spawn-правил не пуст, вероятности в диапазоне [0, 1] и в сумме дают ровно 1
+
+**Вывод поля:**
+- Board.toString() рисует сетку 4x4 в консоль
+- Пустые клетки показываются как ` . `, числа выравниваются по 3 символа
+
+## Структура
+
+| Файл | О чём |
+| `config/CampaignConfig.java` | Record с валидацией в конструкторе BigDecimal для вероятностей |
+| `config/ConfigLoader.java` | Загрузка и парсинг |
+| `model/Board.java` | Игровое поле 4x4, проверки границ |
+| `model/GameState.java` | Состояние игры, фабричный метод создания поля по seed |
+| `model/Position.java` | Координаты клетки (row, col) с валидацией |
+| `mandatory/mr1/ConfigValidationTest.java` | Обязательные тесты: валидация конфига (сумма вероятностей, movesLimit, пустые правила) |
+| `mandatory/mr1/SeedTest.java` | Обязательные тесты: проверка детерминированности начального поля по seed |
+| `mandatory/ИщфквTest.java` | Доп. тест, проверяет что set отклоняет отрицательный cashback |
+
+
+src/main/java/academy/cashbackmerge/
+├── config/
+│   ├── CampaignConfig.java   # Record с валидацией в конструкторе
+│   └── ConfigLoader.java     # Парсинг JSON через Jackson
+└── model/
+    ├── Board.java            # Поле 4x4, toString, проверки границ
+    ├── GameState.java        # Фабричный метод createInitial(config, seed)
+    └── Position.java         # Координаты (row, col) с валидацией
+
+src/test/java/academy/cashbackmerge/
+├── BoardTest.java                          # Доп. тест: set отклоняет отрицательный cashback
+└── mandatory/mr1/
+    ├── ConfigValidationTest.java           # 4 теста на валидацию конфига
+    └── SeedTest.java                       # Тест на воспроизводимость по seed
