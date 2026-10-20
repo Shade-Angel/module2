@@ -1,5 +1,6 @@
 package academy.cashbackmerge.model;
 
+import academy.cashbackmerge.engine.GameEngine;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +13,6 @@ public final class Board {
     private final int[][] grid = new int[constcol][constrol];
 
     public Board() {}
-    ;
 
     public Board(Board other) {
         for (int r = 0; r < constrol; r++) {
@@ -20,17 +20,19 @@ public final class Board {
         }
     }
 
-    public int get(int row, int col) {
-        if (row < 0 || row >= constrol || col < 0 || col >= constcol) {
-            throw new IndexOutOfBoundsException("Board    |  принятые данные в гетер не соотвествует формату");
+    public Board(int[][] grid) {
+        for (int r = 0; r < sizeBoard; r++) {
+            System.arraycopy(grid[r], 0, this.grid[r], 0, sizeBoard);
         }
+    }
+
+    public int get(int row, int col) {
+        validatePositions(row, col);
         return grid[row][col];
     }
 
     public void set(int row, int col, int cashback) {
-        if (row < 0 || row >= constrol || col < 0 || col >= constcol) {
-            throw new IndexOutOfBoundsException("Board    |  Invalid position: row=" + row + ", col=" + col);
-        }
+        validatePositions(row, col);
         if (cashback < 0) {
             throw new IllegalArgumentException(
                     "Board    |  Cashback не может быть отрицательный, сейчас равен = : " + cashback);
@@ -52,6 +54,16 @@ public final class Board {
             }
         }
         return Collections.unmodifiableList(empty);
+    }
+
+    public MoveResult applyMove(Move move) {
+        return GameEngine.applyMoveBoardOnly(this, move);
+    }
+
+    private void validatePositions(int row, int col) {
+        if (row < 0 || row >= constrol || col < 0 || col >= constcol) {
+            throw new IndexOutOfBoundsException("Board    |  Invalid position: row=" + row + ", col=" + col);
+        }
     }
 
     @Override
