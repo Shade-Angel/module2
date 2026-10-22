@@ -41,6 +41,7 @@
 
 
 src/main/java/academy/cashbackmerge/<br>
+├── Main.java                 # Точка входа, CLI
 ├── config/<br>
 │   ├── CampaignConfig.java   # Record с валидацией в конструкторе<br>
 │   └── ConfigLoader.java     # Парсинг JSON через Jackson<br>
@@ -48,12 +49,17 @@ src/main/java/academy/cashbackmerge/<br>
 │   ├── GameEngine.java       # Объединяет игровое поле, логику сдвига рядов и появление новых плиток, обрабатывает ход игрока в любом из 4 направлений<br>
 │   ├── LineProcess.java      # логика сдвига и объединения плиток в одном ряду (строке или столбце)<br>
 │   └── TileSpawn.java        # добавляет (спавнит) новую плитку со случайным кэшбэком на игровое поле<br>
-└── model/<br>
-    ├── Board.java            # Поле 4x4, toString, проверки границ<br>
-    ├── GameState.java        # Фабричный метод createInitial(config, seed)<br>
-    ├── Move.java             # Enum с направлениями ходов и переменными(UP, DOWN, LEFT, RIGHT)<br>
-    ├── MoveResult.java       # Record с переменными board, move, merge, score, newState<br>
-    └── Position.java         # Координаты (row, col) с валидацией<br>
+├── model/<br>
+│   ├── Board.java            # Поле 4x4, toString, проверки границ<br>
+│   ├── GameState.java        # Фабричный метод createInitial(config, seed)<br>
+│   ├── Move.java             # Enum с направлениями ходов и переменными(UP, DOWN, LEFT, RIGHT)<br>
+│   ├── MoveResult.java       # Record с переменными board, move, merge, score, newState<br>
+│   └── Position.java         # Координаты (row, col) с валидацией<br>
+└── simulation/<br>
+    ├── RewardCalculator.java    # Расчёт итоговой награды по максимальной плитке<br>
+    ├── Simulation.java          # Пакетная симуляция игроков<br>
+    ├── GameVisualizer.java      # Консольная визуализация одной партии <br>
+    └── GreedyStrategy.java      # Стратегия выбора хода с максимальным score<br>
 src/test/java/academy/cashbackmerge/<br>
 ├── BoardTest.java                          # Доп. тест: set отклоняет отрицательный cashback<br>
 └── mandatory/<br>
@@ -62,7 +68,12 @@ src/test/java/academy/cashbackmerge/<br>
     │    └── SeedTest.java                       # Тест на воспроизводимость по seed<br>
     └──mr2/<br>
          ├── MergeRulesTest.java           #  Тест на правильность слияния и сдвига плиток<br>
-         └── MoveEngineTest.java                       # Тест на  проверку логики игрового цикла и условий ведения сессии (лимиты, начисление очков, генерация плиток)<br>
+         └── MoveEngineTest.java           # Тест на  проверку логики игрового цикла и условий ведения сессии (лимиты, начисление очков, генерация плиток)<br>
+    └──mr3/<br>
+         └── RewardAndSimulationTest.java  # Тест <br>
+
+
+
 
 
 # MR1
@@ -93,7 +104,7 @@ src/test/java/academy/cashbackmerge/<br>
 | `model/Position.java` | Координаты клетки (row, col) с валидацией |
 | `mandatory/mr1/ConfigValidationTest.java` | Обязательные тесты: валидация конфига (сумма вероятностей, movesLimit, пустые правила) |
 | `mandatory/mr1/SeedTest.java` | Обязательные тесты: проверка детерминированности начального поля по seed |
-| `mandatory/ИщфквTest.java` | Доп. тест, проверяет что set отклоняет отрицательный cashback |
+| `mandatory/BoardTest.java` | Доп. тест, проверяет что set отклоняет отрицательный cashback |
 
 
 
@@ -122,3 +133,35 @@ src/test/java/academy/cashbackmerge/<br>
 | `model/MoveResult.java` | Record-результат хода: новая доска, флаги сдвига/слияния, добавленные очки и новое состояние |<br>
 | `mandatory/mr2/MergeRulesTest.java` | Обязательные тесты |<br>
 | `mandatory/mr2/MoveEngineTest.java` | Обязательные тесты |<br>
+
+
+
+
+# MR3
+**<p style="color: red">Что сделано:</p>**
+
+- Спавна плиток на основе вероятностей из конфига.
+- Таблица наград итоговая награда определяется по максимальной собранной плитке.
+- Симуляция с поддержкой стратегий.
+- Генерация подробного отчёта в формате Markdown.
+
+
+## Структура
+
+| Файл | О чём |
+| `simulation/RewardCalculator.java` | Расчёт итоговой награды по максимальной плитке на поле |<br>
+| `simulation/ReportGenerator.java` | Генерация подробного отчёта в формате Markdown |<br>
+| `Main.java` | Добавлена поддержка CLI аргументов для режимов simulate и demo |<br>
+| `config/CampaignConfig.java` | Обновлён |<br>
+| `mandatory/mr3/RewardAndSimulationTest.java` | Обязательные тесты: проверка наград, вероятностей и структуры отчёта |<br>
+| `mandatory/mr1/SeedTest.java` | Добавлен тест на воспроизводимость отчёта симуляции |<br>
+| `ReportTest` | Слбственный тест на генерация отчета|<br>
+
+
+
+
+## Бонусные функции
+ - **Стратегия** 
+Алгоритм оценивает все возможные ходы и выбирает тот, который принесёт максимальный мгновенный score. При равенстве score выбирает случайный из лучших.
+- **Консольная визуализация** 
+Режим demo, который пошагово отрисовывает поле, показывает выбранный ход, текущий счёт и делает паузу для наглядности процесса.

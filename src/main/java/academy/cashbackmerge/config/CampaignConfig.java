@@ -1,19 +1,26 @@
 package academy.cashbackmerge.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record CampaignConfig(
         @JsonProperty("movesLimit") int movesLimit,
         @JsonProperty("spawnRules") List<SpawnRule> spawnRules,
+        @JsonProperty("rewardTable") @Nullable List<RewardRule> rewardTable,
         @JsonProperty("maxRewardCashback") @Nullable Integer maxRewardCashback,
         @JsonProperty("maxRewardAllowedRate") @Nullable BigDecimal maxRewardAllowedRate) {
     public record SpawnRule(
             @JsonProperty("cashback") int cashback,
             @JsonProperty("probability") BigDecimal probability) {}
+
+    public record RewardRule(
+            @JsonProperty("cashback") int cashback,
+            @JsonProperty("reward") int reward) {}
 
     @JsonCreator
     public CampaignConfig {

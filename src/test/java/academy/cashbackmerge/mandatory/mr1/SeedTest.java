@@ -1,13 +1,12 @@
 package academy.cashbackmerge.mandatory.mr1;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import academy.cashbackmerge.config.CampaignConfig;
 import academy.cashbackmerge.config.ConfigLoader;
 import academy.cashbackmerge.model.GameState;
+import academy.cashbackmerge.simulation.Simulation;
 import java.io.IOException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -46,9 +45,30 @@ class SeedTest {
     }
 
     @Test
-    @Disabled("MR3: реализуй тест и удали эту строку")
     @DisplayName("Одинаковый конфиг, seed и стратегия дают одинаковый отчёт симуляции")
-    void sameInputsProduceSameSimulationReport() {
-        fail("Тест не реализован");
+    void sameInputsProduceSameSimulationReport() throws IOException {
+        String json = """
+                {
+                    "movesLimit": 10,
+                    "spawnRules": [
+                        { "cashback": 1, "probability": "0.85" },
+                        { "cashback": 2, "probability": "0.15" }
+                    ],
+                    "rewardTable": [
+                        { "cashback": 1, "reward": 0 },
+                        { "cashback": 2, "reward": 100 }
+                    ],
+                    "maxRewardCashback": 2,
+                    "maxRewardAllowedRate": 0.20
+                }
+        """;
+        CampaignConfig config = ConfigLoader.loadFromString(json);
+        int players = 100;
+        long seed = 42L;
+        String strategy = "random";
+
+        Simulation.SimulationResult result1 = Simulation.run(config, players, seed, strategy);
+        Simulation.SimulationResult result2 = Simulation.run(config, players, seed, strategy);
+        assertThat(result1).isEqualTo(result2);
     }
 }
