@@ -6,6 +6,7 @@ public final class LineProcess {
 
     private LineProcess() {}
 
+    @SuppressWarnings("ArrayRecordComponent")
     public record Line(int[] values) {
         public Line(int[] values) {
             this.values = Arrays.copyOf(values, values.length);
@@ -34,7 +35,6 @@ public final class LineProcess {
                 i++;
                 continue;
             }
-
             if (i < filtered.length - 1 && filtered[i] == filtered[i + 1]) {
                 int mergedVal = filtered[i] * 2;
                 result[resIdx++] = mergedVal;
